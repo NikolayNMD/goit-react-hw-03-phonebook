@@ -15,25 +15,8 @@ export class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    // name: '',
-    // number: '',
   };
 
-  nanoid = nanoid();
-
-  // getNewContact = newContact => {
-  //   const alredyInContacts = this.state.some(
-  //     contact => contact.name === newContact.name
-  //   );
-
-  //   if (alredyInContacts) {
-  //     return alert(`${newContact.name} is already in contact.`);
-  //   }
-
-  //   this.setState(prevState => ({
-  //     contacts: [...prevState, newContact],
-  //   }));
-  // };
   addContact = contactData => {
     const { name: newName, form: newForm } = contactData;
     if (this.isInContacts(newName)) {
@@ -77,6 +60,23 @@ export class App extends Component {
       Notiflix.Notify.success(`${deleteContact.name} has been removed`);
     }
   };
+
+  componentDidMount() {
+    const data = localStorage.getItem('contacts');
+    const parsedData = JSON.parse(data);
+
+    if (parsedData) {
+      return this.setState({ contacts: [...parsedData] });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (prevState.contacts !== contacts) {
+      const data = JSON.stringify(contacts);
+      localStorage.setItem('contacts', data);
+    }
+  }
 
   render() {
     const { contacts, filter } = this.state;
